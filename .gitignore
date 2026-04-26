@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.env
+.pytest_cache/
+.ipynb_checkpoints/
+.mplconfig/
+
+# Keep generated outputs out of Git except placeholders
+data/processed/*
+!data/processed/.gitkeep
+outputs/figures/*
+!outputs/figures/.gitkeep

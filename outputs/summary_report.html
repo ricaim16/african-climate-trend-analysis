@@ -1,0 +1,113 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Climate Analysis Dashboard</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 40px; line-height: 1.6; color: #333; background-color: #f8f9fa; }
+            .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h1, h2 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+            .charts { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 40px; }
+            .chart { flex: 1; min-width: 450px; text-align: center; }
+            img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }
+            table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 0.9em; }
+            th { background-color: #1f77b4; color: white; text-align: left; padding: 12px; }
+            td { padding: 12px; border-bottom: 1px solid #eee; }
+            tr:hover { background-color: #f5f5f5; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>African Climate Trend Analysis</h1>
+            <h2>Continental Trends</h2>
+            <div class="charts">
+                <div class="chart"><h3>Temperature Trend</h3><img src="figures/temperature_trend.png"></div>
+                <div class="chart"><h3>Rainfall Trend</h3><img src="figures/rainfall_trend.png"></div>
+            </div>
+            <h2>Country-Level Summary</h2>
+            <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>country</th>
+      <th>region</th>
+      <th>records</th>
+      <th>start_year</th>
+      <th>end_year</th>
+      <th>avg_temperature_c</th>
+      <th>avg_rainfall_mm</th>
+      <th>temperature_trend_per_year</th>
+      <th>rainfall_trend_per_year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ghana</td>
+      <td>West Africa</td>
+      <td>3</td>
+      <td>2018</td>
+      <td>2020</td>
+      <td>27.90</td>
+      <td>1166.90</td>
+      <td>0.30</td>
+      <td>-16.35</td>
+    </tr>
+    <tr>
+      <td>Kenya</td>
+      <td>East Africa</td>
+      <td>3</td>
+      <td>2018</td>
+      <td>2020</td>
+      <td>23.43</td>
+      <td>825.57</td>
+      <td>0.35</td>
+      <td>-17.25</td>
+    </tr>
+    <tr>
+      <td>South Africa</td>
+      <td>Southern Africa</td>
+      <td>3</td>
+      <td>2018</td>
+      <td>2020</td>
+      <td>18.63</td>
+      <td>488.60</td>
+      <td>0.25</td>
+      <td>-8.85</td>
+    </tr>
+  </tbody>
+</table>
+            <h2>Last 10 Years Aggregate</h2>
+            <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>year</th>
+      <th>mean_temperature_c</th>
+      <th>mean_rainfall_mm</th>
+      <th>country_count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2018</td>
+      <td>23.03</td>
+      <td>841.60</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2019</td>
+      <td>23.30</td>
+      <td>826.17</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2020</td>
+      <td>23.63</td>
+      <td>813.30</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+    </body>
+    </html>
+    
