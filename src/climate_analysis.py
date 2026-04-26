@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# Setup logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -47,20 +46,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Standardizes column names based on predefined ALIASES.
-    
-    Args:
-        df: The raw input DataFrame.
-    Returns:
-        DataFrame with normalized column names.
-    """
+    """Map input columns to standard internal names."""
     renamed = {column: ALIASES.get(column.strip().lower(), column.strip().lower()) for column in df.columns}
     return df.rename(columns=renamed)
 
 
 def validate_columns(df: pd.DataFrame) -> None:
-    """Validates that all required columns exist in the DataFrame."""
+    """Ensure required columns are present in the DataFrame."""
     missing = REQUIRED_COLUMNS - set(df.columns)
     if missing:
         missing_text = ", ".join(sorted(missing))
@@ -71,14 +63,7 @@ def validate_columns(df: pd.DataFrame) -> None:
 
 
 def load_and_clean_data(input_path: Path) -> pd.DataFrame:
-    """
-    Loads CSV data, normalizes columns, and removes invalid or missing entries.
-    
-    Args:
-        input_path: Path to the raw CSV file.
-    Returns:
-        A cleaned DataFrame sorted by country and year.
-    """
+    """Load CSV and perform type conversion/cleaning."""
     df = pd.read_csv(input_path)
     df = normalize_columns(df)
     validate_columns(df)
@@ -98,21 +83,14 @@ def load_and_clean_data(input_path: Path) -> pd.DataFrame:
 
 
 def calculate_slope(x: np.ndarray, y: np.ndarray) -> float:
-    """Calculates the slope of the linear regression line, returning 0.0 if insufficient data."""
+    """Compute linear regression slope; return 0.0 if data is insufficient."""
     if len(x) > 1 and np.var(x) > 0:
         return float(np.polyfit(x, y, 1)[0])
     return 0.0
 
 
 def compute_country_trends(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Calculates long-term climate trends (slopes) for each country.
-    
-    Args:
-        df: The cleaned climate DataFrame.
-    Returns:
-        A summary DataFrame containing averages and yearly trend slopes.
-    """
+    """Compute per-country averages and multi-year trends."""
     summaries: list[dict[str, float | int | str]] = []
 
     for country, group in df.groupby("country", sort=True):
@@ -120,7 +98,6 @@ def compute_country_trends(df: pd.DataFrame) -> pd.DataFrame:
         temp = group["temperature_c"].to_numpy()
         rainfall = group["rainfall_mm"].to_numpy()
 
-        # Calculate slopes using the helper function
         temp_slope = calculate_slope(years, temp)
         rainfall_slope = calculate_slope(years, rainfall)
 
@@ -157,7 +134,7 @@ def compute_country_trends(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def compute_yearly_summary(df: pd.DataFrame) -> pd.DataFrame:
-    """Aggregates data by year to show continental-scale trends."""
+    """Aggregate data by year for continental analysis."""
     summary = (
         df.groupby("year", as_index=False)
         .agg(
@@ -180,16 +157,7 @@ def save_plot(
     output_path: Path,
     add_trendline: bool = True,
 ) -> None:
-    """
-    Generates and saves a time-series plot with an optional linear trend line.
-    
-    Args:
-        yearly_summary: DataFrame with aggregated yearly data.
-        y_column: The column to plot on the y-axis.
-        title: Chart title.
-        y_label: Label for the y-axis.
-        output_path: Where to save the resulting PNG.
-    """
+    """Generate and export a time-series plot."""
     plt.figure(figsize=(10, 5))
     plt.plot(
         yearly_summary["year"],
@@ -201,7 +169,6 @@ def save_plot(
     )
 
     if add_trendline and len(yearly_summary) > 1:
-        # Calculate linear regression for the trend line
         z = np.polyfit(yearly_summary["year"], yearly_summary[y_column], 1)
         p = np.poly1d(z)
         plt.plot(
@@ -228,7 +195,7 @@ def generate_html_report(
     yearly_summary: pd.DataFrame,
     output_path: Path,
 ) -> None:
-    """Generates a styled HTML dashboard to view results in a browser."""
+    """Export a summary dashboard as HTML."""
     html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -295,13 +262,11 @@ def main() -> None:
         country_summary = compute_country_trends(df)
         yearly_summary = compute_yearly_summary(df)
 
-        # Save processed data
         country_csv = processed_dir / "country_trend_summary.csv"
         yearly_csv = processed_dir / "yearly_climate_summary.csv"
         
         country_summary.to_csv(country_csv, index=False)
         yearly_summary.to_csv(yearly_csv, index=False)
-        logger.info(f"Saved processed data: {country_csv}, {yearly_csv}")
 
         # Generate and save plots
         save_plot(
@@ -319,18 +284,16 @@ def main() -> None:
             output_path=figures_dir / "rainfall_trend.png",
         )
 
-        # Generate HTML report in the outputs directory
         generate_html_report(
             country_summary=country_summary,
             yearly_summary=yearly_summary,
             output_path=figures_dir.parent / "summary_report.html"
         )
 
-        logger.info("Analysis complete.")
-        logger.info(f"All outputs available in: {processed_dir} and {figures_dir}")
+        logger.info(f"Pipeline finished. Outputs in {processed_dir} and {figures_dir}")
 
     except Exception as e:
-        logger.error(f"An error occurred during the analysis pipeline: {e}")
+        logger.error(f"Pipeline failed: {e}")
 
 
 if __name__ == "__main__":
